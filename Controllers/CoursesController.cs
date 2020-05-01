@@ -24,8 +24,8 @@ namespace FacultyMVC.Controllers
         public async Task<IActionResult> Index(int courseSemester, string courseProgramme, string searchString/*, string teacherString*/)
         {
             IQueryable<Course> courses = _context.Course.AsQueryable(); //lista od queries za sekoj course
-            IQueryable<int> semesterQuery= _context.Course.OrderBy(m => m.Semester).Select(m => m.Semester).Distinct(); //lista od queries za site mozni semestri
-            IQueryable<string> programmeQuery = _context.Course.OrderBy(m => m.Programme).Select(m => m.Programme).Distinct(); //lista od queries za site mozni programi
+            IQueryable<int> semesterQuery= _context.Course.OrderBy(m =>m.Semester).Select(m => m.Semester).Distinct(); //lista od queries za site mozni semestri
+            IQueryable<string> programmeQuery = _context.Course.Where(m=>m.Programme != null).OrderBy(m => m.Programme).Select(m => m.Programme).Distinct(); //lista od queries za site mozni programi
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -239,6 +239,7 @@ namespace FacultyMVC.Controllers
                 SelectedStudents = course.Students.Select(sa => sa.StudentId)
             };
 
+            ViewData["CourseName"] = _context.Course.Where(c => c.Id == id).Select(c => c.Title).FirstOrDefault();
             ViewData["chosenId"] = id;
             return View(vm);
         }

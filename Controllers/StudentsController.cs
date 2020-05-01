@@ -231,6 +231,15 @@ namespace FacultyMVC.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var student = await _context.Student.FindAsync(id);
+           
+            //delete image file from the folder
+            string path = Path.Combine(_webHostEnvironment.WebRootPath, "images", student.ProfilePicture);
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)//check file exsit or not
+            {
+                file.Delete();
+            }
+
             _context.Student.Remove(student);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -254,6 +263,7 @@ namespace FacultyMVC.Controllers
 
             courses = courses.Include(c => c.Students).ThenInclude(c => c.Student);
 
+            ViewData["StudentName"] = _context.Student.Where(t => t.Id == id).Select(t => t.FullName).FirstOrDefault();
             ViewData["studentId"] = id;
             return View(courses);
         }

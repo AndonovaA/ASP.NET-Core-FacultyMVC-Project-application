@@ -15,7 +15,7 @@ namespace FacultyMVC.ViewModels
         [StringLength(10)]
         public string Semester { get; set; }
 
-        public int? Year { get; set; }
+        public int Year { get; set; }
 
         public int? Grade { get; set; }
 

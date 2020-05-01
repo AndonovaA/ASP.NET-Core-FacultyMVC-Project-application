@@ -1,53 +1,61 @@
-﻿@model IEnumerable<FacultyMVC.Models.Enrollment>
+﻿@model FacultyMVC.ViewModels.EnrollmentFilterViewModel
 
 
-<h1>Details</h1>
+<h2>Enrolled students for @ViewData["CourseName"] </h2>
+<br />
 
+<form asp-controller="Enrollments" asp-action="CourseStudents" method="get">
+    <p>
+        @Html.DropDownListFor(m => m.EnrollmentYear, Enumerable.Range(2010, DateTime.Now.Year - 2010 + 1).Reverse().Select(i => new SelectListItem { Text = i.ToString(), Value = i.ToString()}))
+
+        <input type="submit" value="Filter" />
+    </p>
+</form>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Student.Index)
+                @Html.DisplayNameFor(model => model.Enrollments[0].Student.Index)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Student.FullName)
+                @Html.DisplayNameFor(model => model.Enrollments[0].Student.FullName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Semester)
+                @Html.DisplayNameFor(model => model.Enrollments[0].Semester)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Year)
+                @Html.DisplayNameFor(model => model.Enrollments[0].Year)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Grade)
+                @Html.DisplayNameFor(model => model.Enrollments[0].Grade)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SeminalUrl)
+                @Html.DisplayNameFor(model => model.Enrollments[0].SeminalUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProjectUrl)
+                @Html.DisplayNameFor(model => model.Enrollments[0].ProjectUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ExamPoints)
+                @Html.DisplayNameFor(model => model.Enrollments[0].ExamPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SeminalPoints)
+                @Html.DisplayNameFor(model => model.Enrollments[0].SeminalPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProjectPoints)
+                @Html.DisplayNameFor(model => model.Enrollments[0].ProjectPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AdditionalPoints)
+                @Html.DisplayNameFor(model => model.Enrollments[0].AdditionalPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FinishDate)
+                @Html.DisplayNameFor(model => model.Enrollments[0].FinishDate)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Enrollments)
         {
             <tr>
                 <td>

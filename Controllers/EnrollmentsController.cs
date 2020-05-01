@@ -27,27 +27,38 @@ namespace FacultyMVC.Controllers
         // GET: Enrollments
         public async Task<IActionResult> Index()
         {
-            var facultyMVCContext = _context.Enrollment.Include(e => e.Course).Include(e => e.Student);
+            var facultyMVCContext = _context.Enrollment.Include(e => e.Course).Include(e => e.Student).OrderBy(e=>e.Course.Title);
             return View(await facultyMVCContext.ToListAsync());
         }
 
         // GET: Enrollments/CourseStudents/5
-        public async Task<IActionResult> CourseStudents(int? id)
+        public async Task<IActionResult> CourseStudents(int? id, int enrollmentYear)
         { 
             if (id == null)
             {
                 return NotFound();
             }
 
-            IQueryable<Enrollment> enrollment = _context.Enrollment.Where(e => e.CourseId == id);
-            enrollment = enrollment.Include(e => e.Course).Include(e => e.Student).OrderBy(e=>e.Student.Index);
-    
-            if (enrollment == null)
+            IQueryable<Enrollment> enrollments = _context.Enrollment.Where(e => e.CourseId == id);
+            enrollments = enrollments.Include(e => e.Course).Include(e => e.Student).OrderBy(e=>e.Student.Index).OrderBy(e=>e.Student.Index);
+
+            if (enrollmentYear != 0)
             {
-                return NotFound();
+                enrollments = enrollments.Where(x => x.Year == enrollmentYear);
+            }
+            else
+            {
+                //po default se prikazuvat studentite zapisani vo poslednata godina
+                enrollments = enrollments.Where(x => x.Year == DateTime.Now.Year);
             }
 
-            return View(await enrollment.ToListAsync());
+            EnrollmentFilterViewModel vm = new EnrollmentFilterViewModel
+            {
+                Enrollments = await enrollments.ToListAsync()
+            };
+
+            ViewData["CourseName"] = _context.Course.Where(c => c.Id == id).Select(c => c.Title).FirstOrDefault();
+            return View(vm);
         }
 
         // GET: Enrollments/Create
@@ -89,8 +100,11 @@ namespace FacultyMVC.Controllers
             {
                 return NotFound();
             }
+
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title", enrollment.CourseId);
             ViewData["StudentId"] = new SelectList(_context.Student, "Id", "FullName", enrollment.StudentId);
+            ViewData["StudentName"] = _context.Student.Where(s => s.Id == enrollment.StudentId).Select(s => s.FullName).FirstOrDefault();
+            ViewData["CourseName"] = _context.Course.Where(s => s.Id == enrollment.CourseId).Select(s => s.Title).FirstOrDefault();
             return View(enrollment);
         }
 
@@ -180,7 +194,7 @@ namespace FacultyMVC.Controllers
             var enrollment = await _context.Enrollment.FindAsync(id);
             _context.Enrollment.Remove(enrollment);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Details", new { id = enrollment.CourseId });
+            return RedirectToAction("Index");
         }
 
         // GET: Enrollments/EditByStudent/5
@@ -196,8 +210,10 @@ namespace FacultyMVC.Controllers
             {
                 return NotFound();
             }
+
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title", enrollment.CourseId);
             ViewData["StudentId"] = new SelectList(_context.Student, "Id", "FullName", enrollment.StudentId);
+
             EnrollmentFormViewModel vm = new EnrollmentFormViewModel
             {
                 Id = enrollment.Id,
@@ -214,6 +230,8 @@ namespace FacultyMVC.Controllers
                 StudentId = enrollment.StudentId
             };
 
+            ViewData["StudentName"] = _context.Student.Where(s => s.Id == enrollment.StudentId).Select(s => s.FullName).FirstOrDefault();
+            ViewData["CourseName"] = _context.Course.Where(s => s.Id == enrollment.CourseId).Select(s => s.Title).FirstOrDefault();
             return View(vm);
         }
 

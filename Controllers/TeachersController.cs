@@ -31,8 +31,8 @@ namespace FacultyMVC.Controllers
 
             //IQueryable<Teacher> teachers = _context.Teacher.AsQueryable();  
             IEnumerable<Teacher> teachers = _context.Teacher;
-            IQueryable<string> rankQuery = _context.Teacher.OrderBy(m => m.AcademicRank).Select(m => m.AcademicRank).Distinct();
-            IQueryable<string> degreeQuery = _context.Teacher.OrderBy(m => m.Degree).Select(m => m.Degree).Distinct();
+            IQueryable<string> rankQuery = _context.Teacher.Where(m=>m.AcademicRank != null).OrderBy(m => m.AcademicRank).Select(m => m.AcademicRank).Distinct();
+            IQueryable<string> degreeQuery = _context.Teacher.Where(m=>m.Degree != null).OrderBy(m => m.Degree).Select(m => m.Degree).Distinct();
 
             if (!string.IsNullOrEmpty(teacherAcademicRank))
             {
@@ -237,6 +237,15 @@ namespace FacultyMVC.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _context.Teacher.FindAsync(id);
+
+            //delete image file from the folder
+            string path = Path.Combine(_webHostEnvironment.WebRootPath, "images", teacher.ProfilePicture);
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)//check file exsit or not
+            {
+                file.Delete();
+            }
+
             _context.Teacher.Remove(teacher);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -254,6 +263,8 @@ namespace FacultyMVC.Controllers
             courses = courses.Include(t=>t.FirstTeacher).Include(t=>t.SecondTeacher);
 
             ViewData["TeacherId"] = id;
+            ViewData["TeacherAcademicRank"] = _context.Teacher.Where(t => t.Id == id).Select(t => t.AcademicRank).FirstOrDefault();
+            ViewData["TeacherName"] = _context.Teacher.Where(t => t.Id == id).Select(t => t.FullName).FirstOrDefault();
             return View(courses);
         }
     }
