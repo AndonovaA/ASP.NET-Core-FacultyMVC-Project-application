@@ -74,7 +74,9 @@
                     @Html.DisplayFor(modelItem => item.Grade)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SeminalUrl)
+                    @if (item.SeminalUrl != null) {
+                    <a href="@Url.Content("~/seminalFiles/" + item.SeminalUrl)">View</a>  
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ProjectUrl)
