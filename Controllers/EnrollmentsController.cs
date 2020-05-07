@@ -308,6 +308,13 @@ namespace FacultyMVC.Controllers
             return uniqueFileName;
         }
 
+        public ActionResult DownloadFile(string filename)
+        {
+            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "seminalFiles");
+            string filePath = Path.Combine(uploadsFolder, filename);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
+        }
 
         private bool EnrollmentExists(int id)
         {

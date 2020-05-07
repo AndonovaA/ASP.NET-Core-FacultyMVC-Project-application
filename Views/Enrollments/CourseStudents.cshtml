@@ -74,8 +74,10 @@
                     @Html.DisplayFor(modelItem => item.Grade)
                 </td>
                 <td>
-                    @if (item.SeminalUrl != null) {
-                    <a href="@Url.Content("~/seminalFiles/" + item.SeminalUrl)">View</a>  
+                    @if (item.SeminalUrl != null)
+                    {
+                        <a href="@Url.Content("~/seminalFiles/" + item.SeminalUrl)">View</a>
+                        @Html.ActionLink("Download", "DownloadFile", new { filename = item.SeminalUrl })
                     }
                 </td>
                 <td>
