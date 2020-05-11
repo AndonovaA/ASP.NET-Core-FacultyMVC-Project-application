@@ -25,10 +25,32 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Enrollments
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string enrollmentCourse, int enrollmentYear, string enrollmentSemester) 
         {
-            var facultyMVCContext = _context.Enrollment.Include(e => e.Course).Include(e => e.Student).OrderBy(e=>e.Course.Title);
-            return View(await facultyMVCContext.ToListAsync());
+            IQueryable<Enrollment> enrollments = _context.Enrollment.AsQueryable();
+            IQueryable<int> yearQuery = _context.Enrollment.OrderBy(m => m.Year).Select(m => m.Year).Distinct(); 
+            IQueryable<string> semesterQuery = _context.Enrollment.Where(m => m.Semester != null).OrderBy(m => m.Semester).Select(m => m.Semester).Distinct(); //ama ne mi gi zema distinct
+
+            if (!string.IsNullOrEmpty(enrollmentCourse))
+            {
+                enrollments = enrollments.Where(s => s.Course.Title.ToLower().Contains(enrollmentCourse.ToLower()));
+            }
+            if (enrollmentYear != 0)
+            {
+                enrollments = enrollments.Where(x => x.Year == enrollmentYear);
+            }
+            if (!string.IsNullOrEmpty(enrollmentSemester))
+            {
+                enrollments = enrollments.Where(s => s.Semester.Equals(enrollmentSemester) );
+            }
+
+            var vm = new EnrollmentFilterViewModel
+            {
+                Years = new SelectList(await yearQuery.ToListAsync()), 
+                Semesters = new SelectList(await semesterQuery.ToListAsync()),
+                Enrollments = await enrollments.OrderBy(e=>e.Course.Title).Include(s => s.Course).Include(s=>s.Student).ToListAsync()
+            };
+            return View(vm); 
         }
 
         // GET: Enrollments/CourseStudents/5
@@ -87,7 +109,7 @@ namespace FacultyMVC.Controllers
             return View(enrollment);
         }
 
-        // GET: Enrollments/Edit/5
+        // GET: Enrollments/Edit/5 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -108,12 +130,33 @@ namespace FacultyMVC.Controllers
             return View(enrollment);
         }
 
-        // POST: Enrollments/Edit/5
+        // GET: Enrollments/EditByAdmin/5 
+        public async Task<IActionResult> EditByAdmin(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var enrollment = await _context.Enrollment.FindAsync(id);
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title", enrollment.CourseId);
+            ViewData["StudentId"] = new SelectList(_context.Student, "Id", "FullName", enrollment.StudentId);
+            ViewData["StudentName"] = _context.Student.Where(s => s.Id == enrollment.StudentId).Select(s => s.FullName).FirstOrDefault();
+            ViewData["CourseName"] = _context.Course.Where(s => s.Id == enrollment.CourseId).Select(s => s.Title).FirstOrDefault();
+            return View(enrollment);
+        }
+
+        // POST: Enrollments/Edit/5 = EditByTeacher
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate,CourseId,StudentId")] Enrollment enrollment)
+        public async Task<IActionResult> Edit(int id, string pom, [Bind("Id,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate,CourseId,StudentId")] Enrollment enrollment)
         {
             if (id != enrollment.Id)
             {
@@ -138,11 +181,21 @@ namespace FacultyMVC.Controllers
                         throw;
                     }
                 }
+                if (pom.Equals("admin"))
+                {
+                    return RedirectToAction("Index");
+                }
                 return RedirectToAction("CourseStudents", new { id = enrollment.CourseId });
             }
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title", enrollment.CourseId);
             ViewData["StudentId"] = new SelectList(_context.Student, "Id", "FullName", enrollment.StudentId);
-            return View(enrollment);
+
+            if (pom.Equals("admin"))
+            {
+                return View("EditByAdmin", enrollment);
+            }
+            else {
+                return View(enrollment); }
         }
 
         // GET: Enrollments/Details/5

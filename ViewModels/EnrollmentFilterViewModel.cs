@@ -11,6 +11,10 @@ namespace FacultyMVC.ViewModels
     {
         public IList<Enrollment> Enrollments { get; set; }
 
-        public int EnrollmentYear { get; set; } 
+        public string EnrollmentCourse { get; set; }
+        public int EnrollmentYear { get; set; }
+        public SelectList Years { get; set; } 
+        public string EnrollmentSemester { get; set; }
+        public SelectList Semesters { get; set; } 
     }
 }

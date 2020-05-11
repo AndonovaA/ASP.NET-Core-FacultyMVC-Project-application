@@ -10,7 +10,6 @@ namespace FacultyMVC.Models
     {
        public int Id { get; set; }
 
-       [StringLength(10)]
        public string Semester { get; set; }
 
        public int Year { get; set; }

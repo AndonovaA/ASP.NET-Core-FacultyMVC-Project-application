@@ -1,5 +1,6 @@
 ﻿@model FacultyMVC.ViewModels.StudentFilterViewModel
 
+<h2>Students</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -45,45 +46,47 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Students) {
-        <tr>
-            <td>
-                @{ if (item.ProfilePicture != null){
-                <img src="~/images/@item.ProfilePicture"
-                 class="rounded-circle"
-                     height="40" width="40"
-                     asp-append-version="true"/>}
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Index)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EnrollmentDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AcquiredCredits)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurrentSemestar)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EducationLevel)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                <a asp-action="MyCourses" asp-route-id="@item.Id">View Courses</a>
+        @foreach (var item in Model.Students)
+        {
+            <tr>
+                <td>
+                    @{ if (item.ProfilePicture != null)
+                        {
+                            <img src="~/images/@item.ProfilePicture"
+                                 class="rounded-circle"
+                                 height="40" width="40"
+                                 asp-append-version="true" />}
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Index)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EnrollmentDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AcquiredCredits)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CurrentSemestar)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationLevel)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                    <a asp-action="MyCourses" asp-route-id="@item.Id">View Courses</a>
 
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

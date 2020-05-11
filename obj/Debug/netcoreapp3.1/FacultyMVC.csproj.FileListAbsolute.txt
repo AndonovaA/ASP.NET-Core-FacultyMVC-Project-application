@@ -380,3 +380,4 @@ C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\staticwebassets\FacultyMVC.StaticWebAssets.xml
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\FacultyMVC.dll
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\FacultyMVC.pdb
+C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Enrollments\EditByAdmin.cshtml.g.cs
