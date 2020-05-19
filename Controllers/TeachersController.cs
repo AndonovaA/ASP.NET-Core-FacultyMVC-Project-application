@@ -10,22 +10,28 @@ using FacultyMVC.Models;
 using FacultyMVC.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace FacultyMVC.Controllers
 {
+    
     public class TeachersController : Controller
     {
+        private UserManager<AppUser> userManager;
         private readonly FacultyMVCContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public TeachersController(FacultyMVCContext context, IWebHostEnvironment webHostEnvironment)
+        public TeachersController(FacultyMVCContext context, IWebHostEnvironment webHostEnvironment, UserManager<AppUser> usrMgr)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            userManager = usrMgr;
         }
 
 
         // GET: Teachers
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string teacherAcademicRank, string teacherDegree, string searchString)
         {
 
@@ -61,6 +67,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Teachers/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -79,6 +86,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Teachers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -87,6 +95,7 @@ namespace FacultyMVC.Controllers
         // POST: Teachers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TeacherFormViewModel model)
@@ -115,6 +124,7 @@ namespace FacultyMVC.Controllers
             }
             return View();
         }
+
         private string UploadedFile(TeacherFormViewModel model)
         {
             string uniqueFileName = null;
@@ -133,6 +143,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Teachers/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -167,6 +178,7 @@ namespace FacultyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, TeacherFormViewModel vm)
         {
             if (id != vm.Id)
@@ -214,6 +226,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Teachers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -234,6 +247,7 @@ namespace FacultyMVC.Controllers
         // POST: Teachers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _context.Teacher.FindAsync(id);
@@ -257,8 +271,15 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Teachers/GetCourses/2
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> GetCourses(int id)
         {
+            AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.TeacherId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            }
+
             var courses = _context.Course.Where(c=>c.FirstTeacherId == id || c.SecondTeacherId == id);
             courses = courses.Include(t=>t.FirstTeacher).Include(t=>t.SecondTeacher);
 

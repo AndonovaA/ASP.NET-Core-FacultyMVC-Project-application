@@ -10,21 +10,27 @@ using FacultyMVC.Models;
 using FacultyMVC.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace FacultyMVC.Controllers
 {
+    
     public class EnrollmentsController : Controller
     {
         private readonly FacultyMVCContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private UserManager<AppUser> userManager;
 
-        public EnrollmentsController(FacultyMVCContext context, IWebHostEnvironment webHostEnvironment)
+        public EnrollmentsController(FacultyMVCContext context, IWebHostEnvironment webHostEnvironment, UserManager<AppUser> userMan)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            userManager = userMan;
         }
 
         // GET: Enrollments
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string enrollmentCourse, int enrollmentYear, string enrollmentSemester) 
         {
             IQueryable<Enrollment> enrollments = _context.Enrollment.AsQueryable();
@@ -54,8 +60,14 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Enrollments/CourseStudents/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> CourseStudents(int? id, int enrollmentYear)
-        { 
+        {
+            /*AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.TeacherId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            }*/
             if (id == null)
             {
                 return NotFound();
@@ -84,6 +96,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Enrollments/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title");
@@ -91,11 +104,10 @@ namespace FacultyMVC.Controllers
             return View();
         }
 
-        // POST: Enrollments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate,CourseId,StudentId")] Enrollment enrollment)
         {
             if (ModelState.IsValid)
@@ -110,8 +122,15 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Enrollments/Edit/5 
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
+            /*AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.TeacherId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            }*/
+
             if (id == null)
             {
                 return NotFound();
@@ -131,6 +150,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Enrollments/EditByAdmin/5 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditByAdmin(int? id)
         {
             if (id == null)
@@ -151,11 +171,10 @@ namespace FacultyMVC.Controllers
             return View(enrollment);
         }
 
-        // POST: Enrollments/Edit/5 = EditByTeacher
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> Edit(int id, string pom, [Bind("Id,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate,CourseId,StudentId")] Enrollment enrollment)
         {
             if (id != enrollment.Id)
@@ -199,8 +218,15 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Enrollments/Details/5
+        [Authorize(Roles = "Student")] 
         public async Task<IActionResult> Details(int? id)
         {
+            /*AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.StudentId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            }*/
+
             if (id == null)
             {
                 return NotFound();
@@ -220,6 +246,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Enrollments/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -242,6 +269,7 @@ namespace FacultyMVC.Controllers
         // POST: Enrollments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enrollment = await _context.Enrollment.FindAsync(id);
@@ -250,9 +278,17 @@ namespace FacultyMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
         // GET: Enrollments/EditByStudent/5
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EditByStudent(int? id)
         {
+            /*AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.StudentId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            }*/
+
             if (id == null)
             {
                 return NotFound();
@@ -288,11 +324,9 @@ namespace FacultyMVC.Controllers
             return View(vm);
         }
 
-        // POST: Enrollments/EditByStudent/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EditByStudent(int id, EnrollmentFormViewModel vm)
         { 
             if (id != vm.Id) 

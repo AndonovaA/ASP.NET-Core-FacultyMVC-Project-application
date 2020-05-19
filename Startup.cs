@@ -1,6 +1,10 @@
+using AutoMapper;
 using FacultyMVC.Data;
+using FacultyMVC.IdentityPolicy;
+using FacultyMVC.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +27,14 @@ namespace FacultyMVC
         {
             services.AddControllersWithViews();
             services.AddDbContext<FacultyMVCContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FacultyMVCContext")));
+            services.AddIdentity<AppUser, IdentityRole>(opt =>
+            {
+                opt.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<FacultyMVCContext>();
+
+            services.AddAutoMapper(typeof(Startup)); //ne go koristam
+            services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordPolicy>();
+            services.AddTransient<IUserValidator<AppUser>, CustomUsernameEmailPolicy>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,17 +52,17 @@ namespace FacultyMVC
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-            
+            app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseStatusCodePages();
+            app.UseDeveloperExceptionPage();
         }
     }
 }

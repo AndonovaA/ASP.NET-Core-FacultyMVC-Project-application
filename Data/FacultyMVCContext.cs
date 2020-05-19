@@ -1,4 +1,6 @@
 ﻿using FacultyMVC.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FacultyMVC.Data
 {
-    public class FacultyMVCContext : DbContext
+    public class FacultyMVCContext : IdentityDbContext<AppUser>
     {
         public FacultyMVCContext(DbContextOptions <FacultyMVCContext> options):base(options)
         { }
@@ -19,6 +21,8 @@ namespace FacultyMVC.Data
          
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<Teacher>()
                 .HasMany<Course>(p => p.Courses_first)
                 .WithOne(p => p.FirstTeacher)
@@ -38,6 +42,7 @@ namespace FacultyMVC.Data
                .HasOne<Course>(p => p.Course)
                .WithMany(p => p.Students)
                .HasForeignKey(p => p.CourseId);
+
         }
 
     }

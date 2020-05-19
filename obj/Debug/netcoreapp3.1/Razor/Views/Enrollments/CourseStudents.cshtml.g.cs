@@ -27,7 +27,7 @@ using FacultyMVC.Models;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"542495e0625d30239e96dc36702f4377fc52bf55", @"/Views/Enrollments/CourseStudents.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"e2e6e0153c6a54070e3f4a5519c7571dec18d5d1", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"83529dd1b7828f75eed5737eb15b3d8dedc63092", @"/Views/_ViewImports.cshtml")]
     public class Views_Enrollments_CourseStudents : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<FacultyMVC.ViewModels.EnrollmentFilterViewModel>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("asp-controller", "Enrollments", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);

@@ -1,4 +1,6 @@
 ﻿@model FacultyMVC.ViewModels.StudentFilterViewModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
 
 <h2>Students</h2>
 
@@ -83,8 +85,21 @@
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                    <a asp-action="MyCourses" asp-route-id="@item.Id">View Courses</a>
 
+                    @{
+                        IQueryable<AppUser> users = UserManager.Users;
+                        IQueryable<int> ids = users.Select(u => u.StudentId).Distinct();
+                        if (ids.Contains(item.Id))
+                        {
+                            AppUser student = users.Where(u => u.StudentId == item.Id).First();
+
+                            <a asp-controller="Admin" asp-action="Update" asp-route-id="@student.Id">Profile</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Admin" asp-action="Create" asp-route-studentid="@item.Id">Profile</a>
+                        }
+                    }
                 </td>
             </tr>
         }

@@ -27,7 +27,7 @@ using FacultyMVC.Models;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"b4ead70e463ba9ede9f12cc8ae5e8cabf1777f75", @"/Views/Courses/Index.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"e2e6e0153c6a54070e3f4a5519c7571dec18d5d1", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"83529dd1b7828f75eed5737eb15b3d8dedc63092", @"/Views/_ViewImports.cshtml")]
     public class Views_Courses_Index : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<FacultyMVC.ViewModels.CourseFilterViewModel>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("asp-action", "Create", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);

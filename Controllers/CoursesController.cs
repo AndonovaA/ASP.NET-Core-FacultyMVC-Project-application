@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using FacultyMVC.Data;
 using FacultyMVC.Models;
 using FacultyMVC.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FacultyMVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CoursesController : Controller
     {
         private readonly FacultyMVCContext _context;

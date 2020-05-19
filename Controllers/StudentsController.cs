@@ -10,6 +10,8 @@ using FacultyMVC.Models;
 using FacultyMVC.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace FacultyMVC.Controllers
 {
@@ -17,15 +19,16 @@ namespace FacultyMVC.Controllers
     {
         private readonly FacultyMVCContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
-
-        public StudentsController(FacultyMVCContext context, IWebHostEnvironment webHostEnvironment)
+        private UserManager<AppUser> userManager;
+        public StudentsController(FacultyMVCContext context, IWebHostEnvironment webHostEnvironment, UserManager<AppUser> usrMgr)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            userManager = usrMgr;
         }
 
         // GET: Students
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string studentIndex, string searchString)
         {
             IQueryable<Student> students = _context.Student.AsQueryable();
@@ -55,6 +58,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Students/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -73,6 +77,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Students/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -83,6 +88,7 @@ namespace FacultyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(StudentFormViewModel model)
         {
             if (ModelState.IsValid)
@@ -127,6 +133,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Students/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -161,6 +168,7 @@ namespace FacultyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, StudentFormViewModel vm)
         {
             if (id != vm.Id)
@@ -208,6 +216,7 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Students/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -228,6 +237,7 @@ namespace FacultyMVC.Controllers
         // POST: Students/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var student = await _context.Student.FindAsync(id);
@@ -251,8 +261,16 @@ namespace FacultyMVC.Controllers
         }
 
         // GET: Students/MyCourses/2
-        public async Task<IActionResult> MyCourses(int? id)
+        [Authorize(Roles = "Student")]
+        [HttpGet]
+        public async Task<IActionResult> MyCourses(int id)
         {
+            AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.StudentId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
+            }
+
             IQueryable<Course> courses = _context.Course.Include(c => c.FirstTeacher).Include(c => c.SecondTeacher).AsQueryable();
 
             IQueryable<Enrollment> enrollments = _context.Enrollment.AsQueryable();
