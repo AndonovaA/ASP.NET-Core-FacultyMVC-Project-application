@@ -12,7 +12,7 @@ namespace FacultyMVC.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 
@@ -23,7 +23,7 @@ namespace FacultyMVC.Models
         public string PhoneNumber { get; set; }
 
 
-        [Required(ErrorMessage = "Password is required")]
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

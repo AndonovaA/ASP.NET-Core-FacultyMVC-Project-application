@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FacultyMVC.Controllers
 {
+
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private UserManager<AppUser> userManager;
@@ -27,13 +29,13 @@ namespace FacultyMVC.Controllers
             userValidator = userValid;
         }
 
-        [Authorize(Roles = "Admin")]
+
         public IActionResult Index()
         {
             return View(userManager.Users);
         }
 
-        [Authorize(Roles = "Admin")]
+
         public IActionResult Create(int studentId, int teacherId)
         {
             ViewData["studentId"] = studentId;
@@ -41,7 +43,7 @@ namespace FacultyMVC.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
@@ -52,15 +54,19 @@ namespace FacultyMVC.Controllers
                 {
                     UserName = user.FirstName + user.LastName,
                     PhoneNumber= user.PhoneNumber,
-                    Email = user.Email,
-                    TeacherId = user.TeacherId,
-                    StudentId = user.StudentId
+                    Email = user.Email
                 };
 
-                if (appUser.StudentId != 0)
+                if (user.StudentId != 0)
+                {
+                    appUser.StudentId = user.StudentId;
                     appUser.Role = "Student";
-                else if (appUser.TeacherId != 0)
+                }
+                else if (user.TeacherId != 0)
+                {
+                    appUser.TeacherId = user.TeacherId;
                     appUser.Role = "Teacher";
+                }
                 else
                     appUser.Role = "Admin";
 
@@ -90,16 +96,10 @@ namespace FacultyMVC.Controllers
             return View(user);
         }
 
-        [Authorize(Roles = "Admin, Student, Teacher")]
+
         public async Task<IActionResult> Update(string id)
         {
-            AppUser loggedUser = await userManager.GetUserAsync(User);
             AppUser user = await userManager.FindByIdAsync(id);
-            
-            if(loggedUser.Id != id)
-            {
-                return RedirectToAction("AccessDenied", "Account", null);
-            }
 
             if (user != null)
                 return View(user);
@@ -107,41 +107,53 @@ namespace FacultyMVC.Controllers
                 return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "Admin, Student, Teacher")]
         [HttpPost]
         public async Task<IActionResult> Update(string id, string email, string phoneNumber, string password)
         {
+            //to use my Custom Validation policies for Email and Password I am using the IPasswordValidator and IUserValidator objects
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
+                IdentityResult validEmail = null;
                 if (!string.IsNullOrEmpty(email))
                 {
-                    IdentityResult validEmail = await userValidator.ValidateAsync(userManager, user);
+                    validEmail = await userValidator.ValidateAsync(userManager, user);
                     if (validEmail.Succeeded)
                         user.Email = email;
                     else
                         Errors(validEmail);
                 }
+                else
+                    ModelState.AddModelError("", "Email cannot be empty"); //apply the Custom Password, Username and Email Policies when Updating a User Account
 
+                IdentityResult validPass = null;
                 if (!string.IsNullOrEmpty(password))
                 {
-                    IdentityResult validPass = await passwordValidator.ValidateAsync(userManager, user, password);
+                    validPass = await passwordValidator.ValidateAsync(userManager, user, password);
                     if (validPass.Succeeded)
                         user.PasswordHash = passwordHasher.HashPassword(user, password);
                     else
                         Errors(validPass);
                 }
+                else
+                    validPass = IdentityResult.Success;
 
                 if (!string.IsNullOrEmpty(phoneNumber))
                 {
-                    user.PhoneNumber = phoneNumber;
+                    if(phoneNumber.Length == 9)
+                        user.PhoneNumber = phoneNumber;
+                    else
+                        ModelState.AddModelError("", "Phone number must be 9 digits long");
                 }
 
-                IdentityResult result = await userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                    return RedirectPermanent("~/Home/Index");
-                else
-                    Errors(result);
+                if (validEmail != null && validEmail.Succeeded && validPass.Succeeded)
+                {
+                    IdentityResult result = await userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                        return RedirectToAction("Index");
+                    else
+                        Errors(result);
+                }
             }
             else
                 ModelState.AddModelError("", "User Not Found");
@@ -149,7 +161,7 @@ namespace FacultyMVC.Controllers
             return View(user);
         }
 
-        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {

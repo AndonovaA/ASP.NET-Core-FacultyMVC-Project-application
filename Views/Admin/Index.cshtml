@@ -1,11 +1,14 @@
 ﻿@model IEnumerable<FacultyMVC.Models.AppUser>
 
-<h2>Users</h2>
-
-<p>
+<div>
     <a asp-action="Create">Create Admin</a>
-</p>
+</div>
+<div>
+    <a asp-controller="Role" asp-action="Index">Manage Roles</a>
+</div>
 
+<hr />
+<h2>Users</h2>
 <table class="table">
     <thead>
         <tr>
@@ -38,3 +41,5 @@
         }
     </tbody>
 </table>
+
+

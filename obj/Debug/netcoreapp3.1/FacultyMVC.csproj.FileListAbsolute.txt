@@ -399,3 +399,4 @@ C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Role\Create.cshtml.g.cs
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Role\Update.cshtml.g.cs
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Account\AccessDenied.cshtml.g.cs
+C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Account\UserInfo.cshtml.g.cs

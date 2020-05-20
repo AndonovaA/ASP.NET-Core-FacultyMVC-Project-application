@@ -7,7 +7,7 @@
     {
         var currentUser = @UserManager.GetUserAsync(User).Result;
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Admin" asp-action="Update" asp-route-id="@currentUser.Id"
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="UserInfo" asp-route-id="@currentUser.Id"
                title="Welcome"> <!--User.Identity.Name--> @currentUser.Email </a>
         </li>
         <li class="nav-item">

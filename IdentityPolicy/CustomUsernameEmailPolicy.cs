@@ -14,13 +14,13 @@ namespace FacultyMVC.IdentityPolicy
             IdentityResult result = await base.ValidateAsync(manager, user);
             List<IdentityError> errors = result.Succeeded ? new List<IdentityError>() : result.Errors.ToList();
 
-            if (!user.Email.ToLower().EndsWith("@yahoo.com"))
+            /*if (!user.Email.ToLower().EndsWith("@feit.ukim.edu.mk")) //ne funkcionira dobro
             {
                 errors.Add(new IdentityError
                 {
-                    Description = "Only yahoo.com email addresses are allowed" 
+                    Description = "Only feit.ukim.edu.mk email addresses are allowed"
                 });
-            }
+            }*/
             return errors.Count == 0 ? IdentityResult.Success : IdentityResult.Failed(errors.ToArray());
         }
     }

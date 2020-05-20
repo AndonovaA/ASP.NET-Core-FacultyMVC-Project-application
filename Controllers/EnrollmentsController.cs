@@ -63,11 +63,6 @@ namespace FacultyMVC.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> CourseStudents(int? id, int enrollmentYear)
         {
-            /*AppUser loggedUser = await userManager.GetUserAsync(User);
-            if (loggedUser.TeacherId != id)
-            {
-                return RedirectToAction("AccessDenied", "Account", null);
-            }*/
             if (id == null)
             {
                 return NotFound();
@@ -75,6 +70,16 @@ namespace FacultyMVC.Controllers
 
             IQueryable<Enrollment> enrollments = _context.Enrollment.Where(e => e.CourseId == id);
             enrollments = enrollments.Include(e => e.Course).Include(e => e.Student).OrderBy(e=>e.Student.Index).OrderBy(e=>e.Student.Index);
+            
+            if(enrollments != null)
+            {
+                var anyenrollment = enrollments.First();
+                AppUser loggedUser = await userManager.GetUserAsync(User);
+                if ((loggedUser.TeacherId != anyenrollment.Course.FirstTeacherId) && (loggedUser.TeacherId != anyenrollment.Course.SecondTeacherId))
+                {
+                    return RedirectToAction("AccessDenied", "Account", null);
+                }
+            }
 
             if (enrollmentYear != 0)
             {
@@ -125,21 +130,22 @@ namespace FacultyMVC.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int? id)
         {
-            /*AppUser loggedUser = await userManager.GetUserAsync(User);
-            if (loggedUser.TeacherId != id)
-            {
-                return RedirectToAction("AccessDenied", "Account", null);
-            }*/
-
             if (id == null)
             {
                 return NotFound();
             }
 
-            var enrollment = await _context.Enrollment.FindAsync(id);
+            Enrollment enrollment = await _context.Enrollment.Include(e => e.Course).Where(e => e.Id == id).FirstOrDefaultAsync();
             if (enrollment == null)
             {
                 return NotFound();
+            }
+           
+
+            AppUser loggedUser = await userManager.GetUserAsync(User);
+            if ((loggedUser.TeacherId != enrollment.Course.FirstTeacherId) && (loggedUser.TeacherId != enrollment.Course.SecondTeacherId))
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
             }
 
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title", enrollment.CourseId);
@@ -221,12 +227,6 @@ namespace FacultyMVC.Controllers
         [Authorize(Roles = "Student")] 
         public async Task<IActionResult> Details(int? id)
         {
-            /*AppUser loggedUser = await userManager.GetUserAsync(User);
-            if (loggedUser.StudentId != id)
-            {
-                return RedirectToAction("AccessDenied", "Account", null);
-            }*/
-
             if (id == null)
             {
                 return NotFound();
@@ -240,6 +240,12 @@ namespace FacultyMVC.Controllers
             if (enrollment == null)
             {
                 return NotFound();
+            }
+
+            AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.StudentId != enrollment.StudentId)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
             }
 
             return View(enrollment);
@@ -283,12 +289,6 @@ namespace FacultyMVC.Controllers
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> EditByStudent(int? id)
         {
-            /*AppUser loggedUser = await userManager.GetUserAsync(User);
-            if (loggedUser.StudentId != id)
-            {
-                return RedirectToAction("AccessDenied", "Account", null);
-            }*/
-
             if (id == null)
             {
                 return NotFound();
@@ -298,6 +298,12 @@ namespace FacultyMVC.Controllers
             if (enrollment == null)
             {
                 return NotFound();
+            }
+
+            AppUser loggedUser = await userManager.GetUserAsync(User);
+            if (loggedUser.StudentId != enrollment.StudentId)
+            {
+                return RedirectToAction("AccessDenied", "Account", null);
             }
 
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title", enrollment.CourseId);

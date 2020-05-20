@@ -27,12 +27,18 @@ namespace FacultyMVC
         {
             services.AddControllersWithViews();
             services.AddDbContext<FacultyMVCContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FacultyMVCContext")));
-            services.AddIdentity<AppUser, IdentityRole>(opt =>
+            services.AddIdentity<AppUser, IdentityRole>(opts =>
             {
-                opt.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<FacultyMVCContext>();
+                opts.User.RequireUniqueEmail = true;
+                opts.Password.RequiredLength = 8;
+                opts.Password.RequireNonAlphanumeric = true;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = true;
+                opts.Password.RequireDigit = true;
+            }).AddEntityFrameworkStores<FacultyMVCContext>();  //ovie restrikcii se za AppUser modelot!
 
             services.AddAutoMapper(typeof(Startup)); //ne go koristam
+
             services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordPolicy>();
             services.AddTransient<IUserValidator<AppUser>, CustomUsernameEmailPolicy>();
         }

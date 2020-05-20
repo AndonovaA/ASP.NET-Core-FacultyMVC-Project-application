@@ -7,6 +7,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200518001334_ChangeAppUserModel.cs" />
     <Compile Remove="Migrations\20200518001334_ChangeAppUserModel.Designer.cs" />
+    <Compile Remove="Migrations\20200519234958_checkUser.cs" />
+    <Compile Remove="Migrations\20200519234958_checkUser.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
