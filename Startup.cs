@@ -41,6 +41,22 @@ namespace FacultyMVC
 
             services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordPolicy>();
             services.AddTransient<IUserValidator<AppUser>, CustomUsernameEmailPolicy>();
+
+            //Web API
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        );
+            });
+            //Json result for api client
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0)
+                .AddJsonOptions(x =>
+                {
+                    x.JsonSerializerOptions.WriteIndented = true; //pretty json
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +85,10 @@ namespace FacultyMVC
             });
             app.UseStatusCodePages();
             app.UseDeveloperExceptionPage();
+
+            //Web API
+            app.UseCors("CorsPolicy");
+     
         }
     }
 }

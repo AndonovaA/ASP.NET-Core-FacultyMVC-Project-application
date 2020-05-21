@@ -392,7 +392,6 @@ C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Admin\Update.cshtml.g.cs
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\bin\Debug\netcoreapp3.1\AutoMapper.dll
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
-C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\FacultyMVC.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_LoginPartial.cshtml.g.cs
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Role\Index.cshtml.g.cs
@@ -400,3 +399,4 @@ C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Role\Update.cshtml.g.cs
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Account\AccessDenied.cshtml.g.cs
 C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\Razor\Views\Account\UserInfo.cshtml.g.cs
+C:\Users\ANE\Documents\Visual Studio 2019\source\FacultyMVC\obj\Debug\netcoreapp3.1\FacultyMVC.MvcApplicationPartsAssemblyInfo.cache
